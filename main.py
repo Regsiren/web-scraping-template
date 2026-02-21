@@ -48,3 +48,12 @@ def process_fix(issue, reward):
     
     fix_suggestion = response.content[0].text
     telegram_alert(f"✅ *AI Drafted a Fix for the £{reward} Bounty!*\nCheck the logs in Railway to review the code.")
+
+if __name__ == "__main__":
+    print("🚀 Remi's Bounty Bot is now scouting...")
+    find_bounties()if __name__ == "__main__":
+    print("🚀 Remi's Bounty Bot is now scouting...")
+    # --- TEST ALERT ---
+    telegram_alert("🔔 *System Check:* Remi, the bridge is live. I am scouting for bounties now!")
+    # ------------------
+    find_bounties()
