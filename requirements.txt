@@ -1,2 +1,4 @@
 requests
-bose
+anthropic
+PyGithub
+python-dotenv
