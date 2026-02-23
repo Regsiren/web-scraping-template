@@ -4,15 +4,14 @@ import time
 import threading
 from flask import Flask
 
-# --- 1. GLOBAL CONFIGURATION ---
 app = Flask(__name__)
 
-# Essential Variables (To be set in Railway later)
+# Essential Variables from your Railway Settings
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
 def send_telegram_msg(message):
-    """Core communication channel for the fleet."""
+    """Core communication channel for the Scout fleet."""
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
     payload = {"chat_id": TELEGRAM_CHAT_ID, "text": message, "parse_mode": "HTML"}
     try:
@@ -22,38 +21,37 @@ def send_telegram_msg(message):
         print(f"❌ Telegram Error: {e}")
         return False
 
-# --- 2. THE COMMAND ROUTES ---
 @app.route('/ping')
 def ping():
-    """Manual trigger to test Telegram connectivity."""
-    test_msg = "🔔 <b>Director's Signal:</b> Bot 1 (Bounty Scout) is communicating perfectly from GitHub to Railway."
+    """Manual trigger: Confirm Telegram is talking to Bot 1."""
+    test_msg = "🔔 <b>Director's Signal:</b> Bot 1 (Bounty Scout) is Online and healthy."
     success = send_telegram_msg(test_msg)
     if success:
-        return "<h1>Success!</h1><p>The bot is talking. Check your Telegram.</p>", 200
+        return "<h1>Success!</h1><p>Check Telegram. The bot is talking.</p>", 200
     else:
-        return "<h1>Fail</h1><p>Telegram rejected the message. Check Token/Chat ID in Railway Variables.</p>", 500
+        # Check logs if this fails; likely a Token or Chat ID issue
+        return "<h1>Fail</h1><p>Telegram rejected the message. Check Token/Chat ID.</p>", 500
 
 @app.route('/')
 def home():
-    return "<h1>Bot 1: Bounty Scout</h1><p>Status: Active and Scouting...</p>", 200
+    return "<h1>Bot 1: Bounty Scout</h1><p>Status: Monitoring...</p>", 200
 
-# --- 3. THE SCOUTING ENGINE ---
-def scout_logic():
-    """Background task that runs independently of the web server."""
-    time.sleep(10) # Wait for server to settle
-    send_telegram_msg("🚀 <b>System Boot:</b> Bounty Scout logic is now running 24/7.")
+def scout_bounties():
+    """Background task: Keeps the scouting logic running 24/7."""
+    time.sleep(10) # Wait for server boot
+    send_telegram_msg("🚀 <b>System Boot:</b> Bounty Scout logic is now running.")
     
     while True:
         try:
             print("🔍 Scouting for new opportunities...")
-            # Your bounty/task logic goes here
-            time.sleep(3600) # Check every hour
+            # Placeholder for your specific scouting logic
+            time.sleep(3600) # Scan every hour
         except Exception as e:
             print(f"Scout Error: {e}")
             time.sleep(600)
 
-# Fire up the background scouting thread
-threading.Thread(target=scout_logic, daemon=True).start()
+# Start the background scouting thread immediately
+threading.Thread(target=scout_bounties, daemon=True).start()
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
