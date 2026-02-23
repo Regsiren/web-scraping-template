@@ -12,9 +12,13 @@ TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
 def send_telegram_msg(message):
-    """The core communication channel for your fleet."""
+    """Core communication channel for the Scout fleet."""
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
-    payload = {"chat_id": TELEGRAM_CHAT_ID, "text": message, "parse_mode": "HTML"}
+    payload = {
+        "chat_id": TELEGRAM_CHAT_ID, 
+        "text": message, 
+        "parse_mode": "HTML"
+    }
     try:
         res = requests.post(url, json=payload)
         return res.status_code == 200
@@ -25,31 +29,36 @@ def send_telegram_msg(message):
 # --- 2. THE TEST PING ROUTE ---
 @app.route('/ping')
 def ping():
-    """Manual trigger: Visit your-url.railway.app/ping to test."""
-    success = send_telegram_msg("🔔 <b>Director's Signal:</b> Bot 1 is Online and communicating from Railway.")
+    """Manual trigger: Visit your-url.railway.app/ping to test Telegram."""
+    test_msg = "🔔 <b>Director's Signal:</b> Bot 1 (Bounty Scout) is Online and healthy."
+    success = send_telegram_msg(test_msg)
     if success:
-        return "<h1>Success!</h1><p>Check your Telegram. The bot is talking.</p>", 200
+        return "<h1>Success!</h1><p>Check Telegram. The bot is talking.</p>", 200
     else:
-        return "<h1>Fail</h1><p>Telegram rejected the message. Check your Token/Chat ID.</p>", 500
+        return "<h1>Fail</h1><p>Telegram rejected the message. Check Token/Chat ID.</p>", 500
 
 @app.route('/')
 def home():
-    return "<h1>Bot 1: Bounty Scout</h1><p>Status: Monitoring...</p>", 200
+    return "<h1>Bot 1: Bounty Scout</h1><p>Status: Active and Scouting...</p>", 200
 
-# --- 3. THE BOUNTY SCANNER LOGIC ---
-def scout_bounties():
-    """Logic for scanning tasks/bounties (Placeholder for your specific logic)."""
+# --- 3. THE SCOUTING LOGIC ---
+def scout_logic():
+    """Background task for bounty scanning."""
+    # This sends an automated ping when the bot first boots up
+    time.sleep(10)
+    send_telegram_msg("🚀 <b>System Boot:</b> Bounty Scout logic is now running.")
+    
     while True:
         try:
             print("🔍 Scouting for new opportunities...")
-            # Example logic: If new bounty found, send_telegram_msg()
-            time.sleep(3600) # Scan every hour
+            # Insert your specific scraping/API logic here
+            time.sleep(3600) # Check every hour
         except Exception as e:
             print(f"Scout Error: {e}")
             time.sleep(600)
 
-# Start the background scouting thread
-threading.Thread(target=scout_bounties, daemon=True).start()
+# Start background thread
+threading.Thread(target=scout_logic, daemon=True).start()
 
 if __name__ == "__main__":
     # Ensure port is handled correctly for Railway
